@@ -67,12 +67,12 @@ Edit `config.json` to add your Craft document share links:
 {
   "documents": [
     {
-      "name": "Notes",
-      "apiEndpoint": "https://connect.craft.do/links/3W1oJ86UXUR/api/v1"
+      "name": "My Notes",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_1/api/v1"
     },
     {
-      "name": "Bonhoeffer Notes",
-      "apiEndpoint": "https://connect.craft.do/links/97vrIxn0L2x/api/v1"
+      "name": "Project Documentation",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_2/api/v1"
     }
   ]
 }
@@ -384,14 +384,14 @@ The Lambda deployment provides a REST API for custom integrations that don't req
 
 **Example - List Documents:**
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.us-east-1.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "list_documents", "arguments": {}}'
 ```
 
 **Example - Search All Notes:**
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.us-east-1.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{
     "name": "search_all_notes",
@@ -425,12 +425,12 @@ Lists all configured Craft documents.
 {
   "documents": [
     {
-      "name": "Notes",
-      "apiEndpoint": "https://connect.craft.do/links/3W1oJ86UXUR/api/v1"
+      "name": "My Notes",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_1/api/v1"
     },
     {
-      "name": "Bonhoeffer Notes",
-      "apiEndpoint": "https://connect.craft.do/links/97vrIxn0L2x/api/v1"
+      "name": "Project Documentation",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_2/api/v1"
     }
   ],
   "count": 2

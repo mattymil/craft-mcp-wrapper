@@ -44,14 +44,14 @@ npm run start:sse
 
 ## AWS Lambda (REST API)
 
-**Status:** ✅ Deployed and working  
-**Base URL:** https://lwysu30rw8.execute-api.us-east-1.amazonaws.com
+**Status:** ✅ Ready to deploy  
+**Base URL:** https://YOUR-API-ID.execute-api.REGION.amazonaws.com (after deployment)
 
 ### Available Endpoints
 
 #### Health Check
 ```bash
-curl https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/health
+curl https://YOUR-API-ID.execute-api.REGION.amazonaws.com/health
 ```
 
 Response:
@@ -65,12 +65,12 @@ Response:
 
 #### List Tools
 ```bash
-curl https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools
+curl https://YOUR-API-ID.execute-api.REGION.amazonaws.com/tools
 ```
 
 #### Call a Tool
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.REGION.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "list_documents", "arguments": {}}'
 ```
@@ -82,15 +82,11 @@ Response:
   "result": {
     "documents": [
       {
-        "name": "Notes",
-        "apiEndpoint": "https://connect.craft.do/links/3W1oJ86UXUR/api/v1"
-      },
-      {
-        "name": "Bonhoeffer Notes",
-        "apiEndpoint": "https://connect.craft.do/links/97vrIxn0L2x/api/v1"
+        "name": "My Notes",
+        "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK/api/v1"
       }
     ],
-    "count": 2
+    "count": 1
   }
 }
 ```
@@ -99,7 +95,7 @@ Response:
 
 **Search all notes:**
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.REGION.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{
     "name": "search_all_notes",
@@ -112,7 +108,7 @@ curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
 
 **Search specific document:**
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.REGION.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{
     "name": "search_document",
@@ -126,7 +122,7 @@ curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
 
 **Read document:**
 ```bash
-curl -X POST https://lwysu30rw8.execute-api.us-east-1.amazonaws.com/tools/call \
+curl -X POST https://YOUR-API-ID.execute-api.REGION.amazonaws.com/tools/call \
   -H "Content-Type: application/json" \
   -d '{
     "name": "read_document",
