@@ -23,8 +23,16 @@ import {
   searchDocument,
   readDocument,
   readBlock,
+  truncateResponse,
+  calculateResponseSize,
 } from "./tools.js";
 import { startSSEServer } from "./server.js";
+
+// Load performance configuration from environment
+const MAX_RESPONSE_SIZE = parseInt(
+  process.env.MAX_RESPONSE_SIZE || "1048576",
+  10
+); // Default: 1MB
 
 // Load environment variables
 dotenv.config();
@@ -191,6 +199,7 @@ function createMCPServer(config: Config): Server {
   // Handle tools/call requests
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
+    const startTime = Date.now();
 
     try {
       let result: any;
@@ -255,11 +264,24 @@ function createMCPServer(config: Config): Server {
           };
       }
 
+      // Apply response size limits and truncation if needed
+      const { data: truncatedResult, metadata } = truncateResponse(
+        result,
+        MAX_RESPONSE_SIZE
+      );
+
+      // Log performance metrics to stderr
+      const executionTime = Date.now() - startTime;
+      const timestamp = new Date().toISOString();
+      console.error(
+        `[PERF] ${timestamp} ${name} ${executionTime}ms size=${metadata.size}bytes${metadata.truncated ? ' (truncated)' : ''}`
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result, null, 2),
+            text: JSON.stringify(truncatedResult),
           },
         ],
       };

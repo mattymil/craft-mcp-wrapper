@@ -97,7 +97,18 @@ SSE_ENDPOINT=/sse
 
 # Optional: API key for SSE authentication
 # MCP_API_KEY=your-secret-key-here
+
+# Performance tuning
+# Maximum response size in bytes (default: 1048576 = 1MB)
+# Larger values may cause stdio blocking with slow connections
+MAX_RESPONSE_SIZE=1048576
 ```
+
+**Performance Configuration:**
+- `MAX_RESPONSE_SIZE` - Maximum size of JSON responses in bytes (default: 1MB)
+  - Responses larger than this will be automatically truncated
+  - Increase for large document reads, but be aware of stdio blocking
+  - Decrease for faster performance with limited bandwidth
 
 ## Running the Server
 
@@ -570,6 +581,45 @@ Read a specific block by its ID.
 
 **Use Case:** Retrieve specific content when you have a block ID from a previous search.
 
+## Performance Best Practices
+
+### Stdio Performance Optimization
+
+This server is optimized for fast stdio communication with AI assistants like Perplexity:
+
+- **Compact JSON:** Response formatting (pretty-printing) is disabled to reduce payload size by ~40%
+- **Response Size Limits:** Large responses are automatically truncated to prevent stdio buffer blocking
+- **Performance Logging:** All tool executions log timing and size metrics to stderr for monitoring
+
+### Performance Metrics
+
+Check stderr output for performance data:
+```
+[PERF] 2024-01-15T10:30:45.123Z search_all_notes 245ms size=15234bytes
+[PERF] 2024-01-15T10:30:50.456Z read_document 1200ms size=524288bytes
+```
+
+### Tips for Optimal Performance
+
+1. **Use Specific Searches:** Prefer `search_document` over `search_all_notes` when you know which document contains the data
+2. **Limit Depth:** Use `maxDepth` parameter with `read_document` to avoid fetching entire deep hierarchies
+3. **Monitor Truncation:** Watch stderr for `[WARN] Response truncated` messages
+4. **Adjust Size Limits:** Increase `MAX_RESPONSE_SIZE` if you frequently see truncation warnings
+5. **Query Optimization:** Use specific search patterns instead of broad queries across all documents
+
+### When Responses Are Truncated
+
+If a response exceeds `MAX_RESPONSE_SIZE`, you'll see:
+- A `[WARN]` message in stderr with original and truncated sizes
+- A `_metadata` field in the response indicating truncation
+- Preserved top-level structure with truncated arrays/content
+
+**Solutions:**
+- Increase `MAX_RESPONSE_SIZE` in your `.env` file
+- Use more specific queries to reduce result set size
+- Use `read_block` instead of `read_document` for specific content
+- Reduce `maxDepth` when reading documents
+
 ## Testing
 
 ### Run Test Suite
@@ -689,6 +739,22 @@ When `search_all_notes` is called:
 - Rebuild the project: `npm run build`
 - Restart the AI assistant
 - Check server logs for errors (stderr in stdio mode)
+
+**Slow performance with Perplexity/Claude**
+- Check stderr for `[PERF]` logs to identify slow operations
+- Large responses (>500KB) may cause delays - see "Response truncated" guidance below
+- Verify `MAX_RESPONSE_SIZE` is set appropriately (default 1MB)
+- Use more specific search queries instead of broad searches
+
+**"Response truncated" warnings in stderr**
+- This means the response exceeded `MAX_RESPONSE_SIZE` and was automatically truncated
+- Check the `_metadata` field in responses for truncation details
+- **To fix:**
+  - Increase `MAX_RESPONSE_SIZE` in `.env` (e.g., `MAX_RESPONSE_SIZE=2097152` for 2MB)
+  - Use more specific queries to reduce result size
+  - Use `search_document` instead of `search_all_notes`
+  - Limit `maxDepth` when calling `read_document`
+- **Note:** Setting `MAX_RESPONSE_SIZE` too high may cause stdio blocking
 
 ### Known Limitations
 

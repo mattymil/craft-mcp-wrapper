@@ -90,6 +90,23 @@ export interface ApiError {
   documentName?: string;
 }
 
+/**
+ * Performance configuration
+ */
+export interface PerformanceConfig {
+  maxResponseSize: number; // in bytes
+}
+
+/**
+ * Response metadata for performance tracking
+ */
+export interface ResponseMetadata {
+  size: number;
+  truncated: boolean;
+  originalSize?: number;
+  message?: string;
+}
+
 // Zod Schemas for tool parameters
 
 /**

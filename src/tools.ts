@@ -1,5 +1,125 @@
-import type { Config, DocumentConfig, AggregatedSearchResult } from "./types.js";
+import type { Config, DocumentConfig, AggregatedSearchResult, ResponseMetadata } from "./types.js";
 import { fetchBlocks, searchBlocks } from "./craft-api.js";
+
+/**
+ * Calculate the size of a JSON response in bytes
+ *
+ * @param data - Data to measure
+ * @returns Size in bytes
+ */
+export function calculateResponseSize(data: any): number {
+  return Buffer.byteLength(JSON.stringify(data), 'utf8');
+}
+
+/**
+ * Truncate a response to fit within a size limit
+ *
+ * @param data - Data to potentially truncate
+ * @param maxSize - Maximum size in bytes
+ * @returns Truncated data and metadata
+ */
+export function truncateResponse(
+  data: any,
+  maxSize: number
+): { data: any; metadata: ResponseMetadata } {
+  const originalSize = calculateResponseSize(data);
+
+  if (originalSize <= maxSize) {
+    return {
+      data,
+      metadata: {
+        size: originalSize,
+        truncated: false,
+      },
+    };
+  }
+
+  // Log truncation warning to stderr
+  console.error(
+    `[WARN] Response truncated: ${originalSize} bytes exceeds limit of ${maxSize} bytes`
+  );
+
+  // Smart truncation: preserve structure but reduce content
+  const truncated = truncateObject(data, maxSize);
+  const truncatedSize = calculateResponseSize(truncated);
+
+  return {
+    data: {
+      ...truncated,
+      _metadata: {
+        truncated: true,
+        originalSize,
+        truncatedSize,
+        message: "Response was truncated due to size limits. Use more specific queries or increase MAX_RESPONSE_SIZE.",
+      },
+    },
+    metadata: {
+      size: truncatedSize,
+      truncated: true,
+      originalSize,
+    },
+  };
+}
+
+/**
+ * Recursively truncate an object to fit within size constraints
+ *
+ * @param obj - Object to truncate
+ * @param targetSize - Target size in bytes
+ * @returns Truncated object
+ */
+function truncateObject(obj: any, targetSize: number): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    // For arrays, keep first few items and indicate truncation
+    const truncatedArray = [];
+    let currentSize = 2; // Account for []
+
+    for (let i = 0; i < obj.length; i++) {
+      const itemSize = calculateResponseSize(obj[i]);
+      if (currentSize + itemSize > targetSize * 0.9) {
+        // Use 90% of target to leave room for metadata
+        truncatedArray.push({
+          _truncated: `... ${obj.length - i} more items truncated`,
+        });
+        break;
+      }
+      truncatedArray.push(obj[i]);
+      currentSize += itemSize;
+    }
+
+    return truncatedArray;
+  }
+
+  // For objects, preserve top-level structure
+  const truncatedObj: any = {};
+  let currentSize = 2; // Account for {}
+
+  for (const [key, value] of Object.entries(obj)) {
+    const pairSize = calculateResponseSize({ [key]: value });
+
+    if (currentSize + pairSize > targetSize * 0.9) {
+      truncatedObj._remaining = "... additional fields truncated";
+      break;
+    }
+
+    // Recursively truncate nested structures
+    if (Array.isArray(value) && value.length > 10) {
+      truncatedObj[key] = truncateObject(value, targetSize / 4);
+    } else if (typeof value === 'string' && value.length > 1000) {
+      truncatedObj[key] = value.substring(0, 1000) + "... (truncated)";
+    } else {
+      truncatedObj[key] = value;
+    }
+
+    currentSize += pairSize;
+  }
+
+  return truncatedObj;
+}
 
 /**
  * List all configured Craft documents
