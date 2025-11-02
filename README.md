@@ -8,6 +8,8 @@ A Model Context Protocol (MCP) server that wraps multiple Craft document APIs an
 
 > **Note:** This is an open-source project. Contributions are welcome!
 
+📚 **Quick Links:** [Quick Start](QUICKSTART.md) | [Contributing](CONTRIBUTING.md) | [AWS Deployment](DEPLOYMENT.md) | [Status](DEPLOYMENT_STATUS.md)
+
 ## Overview
 
 This MCP server provides a unified interface to search and read content from multiple Craft documents simultaneously. It aggregates results across configured documents while gracefully handling failures, making it ideal for querying distributed knowledge bases.
