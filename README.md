@@ -57,6 +57,26 @@ This MCP server provides a unified interface to search and read content from mul
    npm run build
    ```
 
+### Production Deployment (macOS)
+
+For stable production use with MCP clients, deploy to a system-wide location:
+
+```bash
+# Build the project
+npm run build
+
+# Deploy to production location
+sudo mkdir -p /usr/local/lib/craft-wrapper
+sudo cp -r build config.json package.json node_modules /usr/local/lib/craft-wrapper/
+```
+
+Then configure your MCP clients to use `/usr/local/lib/craft-wrapper/build/index.js` as the entry point.
+
+**Benefits:**
+- Stable path that won't change with project updates
+- Separates production runtime from development workspace
+- Easy rollback by keeping previous versions
+
 ## Configuration
 
 ### Document Configuration (`config.json`)
@@ -324,19 +344,19 @@ Add to Perplexity's MCP settings:
   "mcpServers": {
     "craft-wrapper": {
       "command": "node",
-      "args": ["<path-to-project>/build/index.js"]
+      "args": ["/usr/local/lib/craft-wrapper/build/index.js"]
     }
   }
 }
 ```
 
-Replace `<path-to-project>` with the absolute path to your installation. For example:
+**For development/custom installations**, replace with your project path:
 ```json
 {
   "mcpServers": {
     "craft-wrapper": {
       "command": "node",
-      "args": ["/Users/username/projects/craft-mcp-wrapper/build/index.js"]
+      "args": ["/path/to/your/craft-mcp-wrapper/build/index.js"]
     }
   }
 }
@@ -353,11 +373,13 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
   "mcpServers": {
     "craft-wrapper": {
       "command": "node",
-      "args": ["<path-to-project>/build/index.js"]
+      "args": ["/usr/local/lib/craft-wrapper/build/index.js"]
     }
   }
 }
 ```
+
+**For development/custom installations**, replace with your project path.
 
 ### VS Code / Cursor
 
@@ -368,11 +390,13 @@ For MCP-compatible extensions, configure the server path in your workspace setti
   "mcp.servers": {
     "craft-wrapper": {
       "command": "node",
-      "args": ["<path-to-project>/build/index.js"]
+      "args": ["/usr/local/lib/craft-wrapper/build/index.js"]
     }
   }
 }
 ```
+
+**For development/custom installations**, replace with your project path.
 
 ### Remote SSE Connection
 
