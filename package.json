@@ -1,0 +1,70 @@
+{
+  "name": "craft-mcp-wrapper",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server that wraps multiple Craft document APIs for AI assistants",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "start:sse": "node build/index.js --sse",
+    "dev": "nodemon --watch src --exec 'npm run build && npm start'",
+    "dev:sse": "nodemon --watch src --exec 'npm run build && npm run start:sse'",
+    "test": "node build/test.js",
+    "package": "npm run build && serverless package",
+    "deploy": "npm run build && serverless deploy",
+    "deploy:dev": "npm run build && serverless deploy --stage dev",
+    "deploy:prod": "npm run build && serverless deploy --stage prod",
+    "remove": "serverless remove",
+    "remove:dev": "serverless remove --stage dev",
+    "remove:prod": "serverless remove --stage prod",
+    "logs": "serverless logs -f api -t",
+    "logs:dev": "serverless logs -f api -t --stage dev",
+    "logs:prod": "serverless logs -f api -t --stage prod",
+    "invoke": "serverless invoke -f api",
+    "offline": "npm run build && serverless offline",
+    "info": "serverless info"
+  },
+  "keywords": [
+    "mcp",
+    "craft",
+    "model-context-protocol",
+    "ai",
+    "perplexity",
+    "claude",
+    "anthropic",
+    "craft-docs",
+    "knowledge-base"
+  ],
+  "author": "Matt Miller",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattymil/craft-mcp-wrapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mattymil/craft-mcp-wrapper/issues"
+  },
+  "homepage": "https://github.com/mattymil/craft-mcp-wrapper#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "@types/aws-lambda": "^8.10.157",
+    "axios": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "serverless-http": "^4.0.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.9.2",
+    "nodemon": "^3.1.10",
+    "serverless": "^4.22.0",
+    "serverless-offline": "^14.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

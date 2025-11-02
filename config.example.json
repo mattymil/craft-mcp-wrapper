@@ -1,0 +1,12 @@
+{
+  "documents": [
+    {
+      "name": "My Notes",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_1/api/v1"
+    },
+    {
+      "name": "Project Documentation",
+      "apiEndpoint": "https://connect.craft.do/links/YOUR_SHARE_LINK_2/api/v1"
+    }
+  ]
+}
